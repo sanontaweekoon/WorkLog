@@ -3,7 +3,7 @@ Access Rights and Features of WorkLog App
 
 🔹 Admin Permissions
 
-📌 View Work Logs of Members
+📌 View Work Logs of Members \n
  📅 Check daily/weekly work logs of team members
  📆 Select start and end dates for viewing logs
  📊 Export work logs to Excel (based on selected dates)
