@@ -3,22 +3,22 @@ Access Rights and Features of WorkLog App
 
 🔹 Admin Permissions
 
-📌 View Work Logs of Members \n
- 📅 Check daily/weekly work logs of team members
- 📆 Select start and end dates for viewing logs
- 📊 Export work logs to Excel (based on selected dates)
-
-📌 Manage Departments
- 🏢 Add, edit, or delete departments
-
-📌 Manage Personnel
- 👥 Add, edit, or delete personnel
- 🔄 Assign personnel to specific departments
-
-📌 Manage Projects
- 📂 Add, edit, or delete projects
- 📑 Export project reports to Excel & PDF
-
+📌 View Work Logs of Members <br>
+ 📅 Check daily/weekly work logs of team members <br>
+ 📆 Select start and end dates for viewing logs <br>
+ 📊 Export work logs to Excel (based on selected dates) <br>
+<br>
+📌 Manage Departments <br>
+ 🏢 Add, edit, or delete departments <br>
+<br>
+📌 Manage Personnel <br>
+ 👥 Add, edit, or delete personnel <br>
+ 🔄 Assign personnel to specific departments <br>
+ <br>
+📌 Manage Projects <br>
+ 📂 Add, edit, or delete projects <br>
+ 📑 Export project reports to Excel & PDF <br>
+<br>
 ------------------------------------------------------------
 
 🔹 Member Permissions
