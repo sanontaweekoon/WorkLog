@@ -56,6 +56,8 @@ Access Rights and Features of WorkLog App
 
 
   🖥️📱 Record work logs via desktop or mobile
+
+  
   📸   Upload images or capture photos to attach to work logs
 
 
@@ -69,5 +71,9 @@ Access Rights and Features of WorkLog App
 
 
   ✏️ Edit name, profile picture, and phone number
+
+  
   🔑 Change password (requires current password for security)
+
+  
   🛠️ If the member forgets the password, the admin can reset it
