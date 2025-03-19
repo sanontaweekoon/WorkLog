@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
 <style>
     .form-group {
         margin-bottom: 15px;
@@ -138,7 +137,7 @@ $row_LastID = mysqli_fetch_assoc($LastID);
                 <div class="col-md-6">
                     <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*" onchange="previewImage(event)">
                     <br>
-                    <img id="imagePreview" src="uploads/default.png" alt="Profile Preview" width="100" height="100" style="border-radius: 50%; display: none;">
+                    <img id="imagePreview" src="uploads/default.png" alt="Profile Preview" width="100" height="100" style="border-radius: 50%; display: none;" loading="lazy">
                 </div>
             </div>
 

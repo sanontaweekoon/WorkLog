@@ -14,7 +14,6 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            font-family: 'Kanit', sans-serif;
         }
         body::before {
             content: "";

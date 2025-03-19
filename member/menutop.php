@@ -3,7 +3,7 @@
   <a href="" class="logo">
     <!-- mini logo for sidebar mini 50x50 pixels -->
     <span class="logo-mini">
-      <img src="../images/favicon.png" alt="Logo" style="width: 50px; height: 50px;">
+      <img src="../images/favicon.png" alt="Logo" style="width: 50px; height: 50px;" loading="lazy">
     </span>
     <!-- logo for regular state and mobile devices -->
     <span class="logo-lg"><b>WORKLOG

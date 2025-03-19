@@ -38,12 +38,12 @@ if (!empty($_FILES["profile_picture"]["name"])) {
         $file_name = "profile_" . $personel_id . "_" . time() . "." . $file_ext;
         $target_file = $target_dir . $file_name;
 
-        // ✅ ลบไฟล์เก่าถ้ามี
+        // ลบไฟล์เก่าถ้ามี
         if (!empty($old_profile_picture) && file_exists($target_dir . $old_profile_picture) && $old_profile_picture !== "default.png") {
             unlink($target_dir . $old_profile_picture);
         }
 
-        // ✅ อัปโหลดไฟล์ใหม่
+        //อัปโหลดไฟล์ใหม่
         if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $target_file)) {
             $profile_picture = $file_name; // อัปเดตชื่อไฟล์ใหม่
         }

@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
 <?php
 $query_personel = "SELECT * 
                    FROM personel as p, institution as i
@@ -99,7 +98,7 @@ $result = mysqli_query($con, $query_personel);
 
 <div id="imageModal" class="modal">
     <span class="close">&times;</span>
-    <img class="modal-content" id="modalImage">
+    <img class="modal-content" id="modalImage" loading="lazy">
 </div>
 
 <div class="table-responsive">
@@ -123,7 +122,7 @@ $result = mysqli_query($con, $query_personel);
                 <tr>
                     <td data-label="รหัส"><?= $row["personel_id"]; ?></td>
                     <td data-label="รูป">
-                        <img src="<?= $profile_picture; ?>" class="profile-img" alt="Profile" onclick="openModal(this)">
+                        <img src="<?= $profile_picture; ?>" class="profile-img" alt="Profile" onclick="openModal(this)" loading="lazy">
                     </td>
                     <td data-label="ชื่อบุคลากร"><?= $row["personel_name"]; ?></td>
                     <td data-label="แผนก"><?= $row["institution_name"]; ?></td>

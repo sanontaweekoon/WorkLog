@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
+
 <?php
 ob_start();  // เปิด Output Buffering ป้องกัน Headers Sent Error
 session_start();
@@ -337,10 +337,7 @@ $personel_name = $user['personel_name'] ?? "Guest";
 
     document.getElementById("refreshCalendar").addEventListener("click", function() {
       if (calendar) {
-        console.log("refresh...");
-
         calendar.removeAllEvents();
-
         calendar.addEventSource('api_get_today_record.php');
       } else {
         console.error("calendar has not configured.");
@@ -360,17 +357,12 @@ $personel_name = $user['personel_name'] ?? "Guest";
       },
       events: 'api_get_today_record.php', // โหลดข้อมูลจาก API
       eventClick: function(info) {
-        console.log("📅 Click Event: ", info.event); // Debugging
-
         // ตั้งค่าข้อมูลลงใน modal
         document.getElementById('modal-title').textContent = info.event.title;
         document.getElementById('modal-date').textContent = info.event.start.toLocaleDateString();
         document.getElementById('modal-personnel').textContent = info.event.extendedProps.personel_name || "ไม่ระบุ";
         document.getElementById('modal-description').innerHTML = info.event.extendedProps.description || "ไม่มีรายละเอียด";
-
-        // ตรวจสอบว่ามี Modal หรือไม่
-        console.log($('#eventModal'));
-
+        
         // แสดง Modal ด้วย Bootstrap 3
         $('#eventModal').modal('show');
 

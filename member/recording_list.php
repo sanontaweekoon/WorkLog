@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
-
 <?php
 include('../condb.php');
 include('header.php');
@@ -195,7 +193,35 @@ $result = $con->query($sql);
         /* เปลี่ยนเป็นเทาเข้มขึ้นเล็กน้อยเมื่อโฮเวอร์ */
         color: rgba(30, 30, 30, 0.7);
     }
+
+
+    .swal-delete-btn {
+        font-size: 20px !important;
+        padding: 12px 25px !important;
+        background-color: #d33 !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+    }
+
+    .swal-delete-btn:hover {
+        background-color: #b02a2a !important;
+    }
+
+    .swal-cancel-btn {
+        font-size: 20px !important;
+        padding: 12px 25px !important;
+        background-color: #6c757d !important;
+        border-radius: 8px !important;
+        font-weight: bold !important;
+    }
+
+    .swal-cancel-btn:hover {
+        background-color: #5a6268 !important;
+    }
 </style>
+
+<!-- เรียกใช้งาน SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <body class="hold-transition skin-green sidebar-mini">
     <div class="wrapper">
@@ -229,13 +255,13 @@ $result = $con->query($sql);
                             </div>
 
                             <?php
-                            $imagePath = "uploads/default.png"; // รูปเริ่มต้น
+                            $imagePath = "../uploads/default.png"; // รูปเริ่มต้น
 
-                            if (preg_match('/<img.*?src=["\'](uploads\/[^"\']+)["\']/', $row['detail'], $match)) {
-                                $imagePath = $match[1]; // ใช้เฉพาะภาพแรก
+                            if (preg_match('/<img.*?src=["\'](?:\.\.\/)?uploads\/([^"\']+)["\']/', $row['detail'], $match)) {
+                                $imagePath = "../uploads/" . $match[1]; // ใช้เฉพาะภาพแรก
                             }
                             ?>
-                            <img src="<?php echo $imagePath; ?>" alt="Image" class="img-fluid">
+                            <img src="<?php echo $imagePath; ?>" alt="Image" class="img-fluid" loading="lazy">
 
                             <div class="card-body">
                                 <p class="card-text"><?php echo html_entity_decode(strip_tags($row['detail'])); ?></p>
@@ -246,7 +272,7 @@ $result = $con->query($sql);
                         <button onclick="topFunction()" id="myBtn" title="Go to top"><i class='fas fa-arrow-alt-circle-up'></i></button>
 
                         <!-- Modal แสดงรายละเอียด -->
-                        <div class="modal fade" id="detailModal<?php echo $row['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="modalTitle<?php echo $row['id']; ?>" aria-hidden="true">
+                        <div class="modal fade" id="detailModal<?php echo $row['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="modalTitle<?php echo $row['id']; ?>" data-backdrop="static">
                             <div class="modal-dialog modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -271,6 +297,7 @@ $result = $con->query($sql);
                                             <?php if ($is_owner) { ?>
                                                 <div class="edit-btn-container">
                                                     <button class="btn btn-dark edit-btn" onclick="toggleEditMode(<?php echo $row['id']; ?>)">แก้ไข</button>
+                                                    <button class="btn btn-danger delete-btn" onclick="deleteRecord(<?php echo $row['id']; ?>)">ลบ</button>
                                                 </div>
                                             <?php } ?>
                                         </div>
@@ -288,8 +315,9 @@ $result = $con->query($sql);
                                                 <input type="date" name="date" class="form-control" value="<?php echo htmlspecialchars($row['date']); ?>" required>
                                             </div>
 
-                                            <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-                                            <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+                                            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css">
+                                            <script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-dev.4/dist/quill.min.js"></script>
 
                                             <!-- Container สำหรับ Quill Editor -->
                                             <div class="form-group">
@@ -325,11 +353,11 @@ $result = $con->query($sql);
 
                                                 // เมื่อฟอร์มถูกส่ง ให้เก็บค่ารายละเอียด
                                                 document.querySelector("#edit-mode-<?php echo $row['id']; ?>").onsubmit = function() {
+                                                    event.preventDefault();
+                                                    updateHiddenInput();
+
                                                     let currentContent = quill<?php echo $row['id']; ?>.root.innerHTML;
                                                     let originalContent = <?php echo json_encode(html_entity_decode($row['detail'])); ?>;
-
-                                                    console.log("ข้อมูลเดิม: ", originalContent);
-                                                    console.log("🔍 ข้อมูลใหม่:", currentContent);
 
                                                     if (currentContent.trim() === originalContent.trim()) {
                                                         alert("ไม่มีการเปลี่ยนแปลงข้อมูล");
@@ -357,13 +385,9 @@ $result = $con->query($sql);
                                                             return;
                                                         }
 
-                                                        console.log("File selected:", file);
-
                                                         resizeImage(file, 800, 800, 0.7, async function(resizedBlob) {
                                                             let formData = new FormData();
                                                             formData.append('image', resizedBlob, file.name);
-
-                                                            console.log("⬆ Uploading image...");
 
                                                             try {
                                                                 let response = await fetch('upload_image.php', {
@@ -372,7 +396,6 @@ $result = $con->query($sql);
                                                                 });
 
                                                                 let result = await response.json();
-                                                                console.log("Upload Result:", result);
 
                                                                 if (result.success) {
                                                                     let range = quill<?php echo $row['id']; ?>.getSelection();
@@ -431,6 +454,51 @@ $result = $con->query($sql);
                                                             console.error('เกิดข้อผิดพลาดขึ้น');
                                                         })
                                                 }
+
+                                                function deleteRecord(recordId) {
+                                                    Swal.fire({
+                                                        title: "<h2>ลบบันทึกนี้หรือไม่</h2>",
+                                                        html: '<p style="font-size: 18px;">บันทึกนี้จะไม่สามารถดูได้อีกถ้าหากลบไปแล้ว !</p>',
+                                                        icon: "warning",
+                                                        showCancelButton: true,
+                                                        confirmButtonText: "ลบเลย!",
+                                                        cancelButtonText: "ยกเลิก",
+                                                        width: '500px',
+                                                        customClass: {
+                                                            confirmButton: 'swal-delete-btn',
+                                                            cancelButton: 'swal-cancel-btn'
+                                                        }
+                                                    }).then((result) => {
+                                                        if (result.isConfirmed) {
+                                                            $.ajax({
+                                                                url: "delete_record.php",
+                                                                type: "POST",
+                                                                dataType: "json",
+                                                                data: {
+                                                                    id: recordId
+                                                                },
+                                                                success: function(response) {
+                                                                    if (response.status === "success") {
+                                                                        Swal.fire({
+                                                                            title: "ลบสำเร็จ",
+                                                                            text: response.message,
+                                                                            icon: "success",
+                                                                            timer: 1500,
+                                                                            showConfirmButton: false
+                                                                        }).then(() => {
+                                                                            location.reload();
+                                                                        });
+                                                                    } else {
+                                                                        Swal.fire("ผิดพลาด!", response.message, "error");
+                                                                    }
+                                                                },
+                                                                error: function() {
+                                                                    Swal.fire("ผิดพลาด!", "ไม่สามารถลบบันทึกได้", "error");
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                }
                                             </script>
                                             <div class="modal-footer">
                                                 <?php if ($is_owner) { ?>
@@ -448,6 +516,7 @@ $result = $con->query($sql);
             </section>
         </div>
     </div>
+
     <script>
         function toggleEditMode(id) {
             let viewMode = document.getElementById("view-mode-" + id);
@@ -504,7 +573,10 @@ $result = $con->query($sql);
 
                 cards.forEach(function(card) {
                     let title = card.querySelector("h4").textContent.toLowerCase();
-                    if (title.includes(searchValue)) {
+                    let descriptionElement = card.querySelector(".card-text"); // ส่วนรายละเอียด
+                    let description = descriptionElement ? descriptionElement.textContent.toLowerCase() : "";
+
+                    if (title.includes(searchValue) || description.includes(searchValue)) {
                         card.style.display = "flex";
                         visibleCards++;
                         lastVisibleCard = card;
@@ -547,5 +619,6 @@ $result = $con->query($sql);
             document.documentElement.scrollTop = 0;
         }
     </script>
+
     <?php include('footerjs.php'); ?>
 </body>

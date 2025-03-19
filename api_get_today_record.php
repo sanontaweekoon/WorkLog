@@ -15,7 +15,7 @@ $sql = "SELECT r.title, r.date, r.detail, p.personel_name, p.color, p.text_color
 
 $result = $con->query($sql);
 
-$base_url = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) ? "http://localhost/worklog/member/uploads/" : "http://stockappst.com/member/uploads/"; //ต้องเปลี่ยนเวลาที่ขึ้น server จริง
+$base_url = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) ? "http://localhost/worklog/uploads/" : "http://stockappst.com/uploads/"; //ต้องเปลี่ยนเวลาที่ขึ้น server จริง
 
 $data = [];
 while ($row = $result->fetch_assoc()) {
