@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
 <?php
 ob_start();  // เปิด Output Buffering ป้องกัน Headers Sent Error
 session_start();
@@ -10,8 +9,9 @@ if (!isset($_SESSION['personel_id']) || empty($_SESSION['personel_id'])) {
   exit();
 }
 
-$personel_id = mysqli_real_escape_string($con, $_SESSION['personel_id']);
-$query_user = "SELECT personel_name FROM personel WHERE personel_id = '$personel_id'";
+$personel_id = $_SESSION['personel_id'];  // ค่า personel_id จาก session
+
+$query_user = "SELECT personel_name, institution_id, personel_level FROM personel WHERE personel_id = '$personel_id'";
 $result_user = mysqli_query($con, $query_user);
 
 if (!$result_user) {
@@ -20,6 +20,19 @@ if (!$result_user) {
 
 $user = mysqli_fetch_assoc($result_user);
 $personel_name = $user['personel_name'] ?? "Guest";
+$institution_id = $user['institution_id'] ?? null;
+$personel_level = $user['personel_level'] ?? 'member'; // ตรวจสอบระดับผู้ใช้
+
+$query_institution = "SELECT institution_id, institution_name FROM institution WHERE institution_id = '$institution_id'"; // ใช้ institution_id ของผู้ใช้
+$result_institution = mysqli_query($con, $query_institution);
+$institution = mysqli_fetch_assoc($result_institution);
+
+// ถ้าผู้ใช้งานเป็น admin ดึงข้อมูลแผนกและพนักงานมาแสดง
+if ($personel_level === 'admin') {
+  // ดึงข้อมูลแผนกทั้งหมดจากฐานข้อมูล
+  $query_institution = "SELECT institution_id, institution_name FROM institution";
+  $result_institution = mysqli_query($con, $query_institution);
+}
 ?>
 
 <style>
@@ -230,14 +243,37 @@ $personel_name = $user['personel_name'] ?? "Guest";
       width: 100%;
     }
   }
+
+  @media (max-width: 768px) {
+    .filter-section {
+      flex-direction: column;
+    }
+
+    .date-group {
+      flex-direction: column;
+    }
+
+    .form-group {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .button-group {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .button-group button {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-
-
 
 <?php include('header.php'); ?>
 
@@ -255,36 +291,53 @@ $personel_name = $user['personel_name'] ?? "Guest";
 
       <section class="content">
         <!-- ส่วนของการค้นหา-->
-        <div class="filter-section">
-          <div class="date-group">
-            <label for="startDate">วันที่เริ่มต้น:</label>
-            <input type="date" id="startDate">
-            <label for="endDate">วันที่สิ้นสุด:</label>
-            <input type="date" id="endDate">
+        <div class="filter-section d-flex flex-wrap align-items-center mb-3">
+          <div class="date-group d-flex flex-wrap mb-3 mb-md-0">
+            <div class="form-group mr-3">
+              <label for="startDate">วันที่เริ่มต้น:</label>
+              <input type="date" id="startDate" onchange="filterRecords()">
+            </div>
+
+            <div class="form-group">
+              <label for="endDate">วันที่สิ้นสุด:</label>
+              <input type="date" id="endDate" onchange="filterRecords()">
+            </div>
+
+            <div class="form-group mr-3 w-100">
+              <!-- ตรวจสอบระดับผู้ใช้ -->
+              <?php if ($personel_level === 'admin') : ?>
+                <!-- ถ้าเป็น Admin ให้แสดงฟอร์มกรองแผนก -->
+                <!-- ฟอร์มกรองแผนก -->
+                <select id="institutionFilter" class="form-control">
+                  <option value="<?= $institution['institution_id'] ?>" selected><?= $institution['institution_name'] ?></option>
+                  <?php while ($row = mysqli_fetch_assoc($result_institution)): ?>
+                    <?php if ($row['institution_id'] != $institution['institution_id']): ?>
+                      <option value="<?= $row['institution_id'] ?>"><?= $row['institution_name'] ?></option>
+                    <?php endif ?>
+                  <?php endwhile ?>
+                </select>
+
+              <?php else : ?>
+                <!-- ถ้าไม่ใช่ Admin ให้ส่งค่า institution_id และ personel_id ของผู้ใช้ -->
+                <input type="text" id="institutionFilter" class="form-control" value="<?php echo $institution_id; ?>" readonly />
+                <input type="text" id="personelFilter" class="form-control" value="<?php echo $personel_id ?>" readonly />
+              <?php endif; ?>
+            </div>
+
+            <!-- เลือกพนักงาน (จะยังไม่แสดงจนกว่าผู้ใช้จะเลือกแผนก) -->
+            <div class="form-group w-100" id="personelSelectDiv">
+              <select id="personelFilter" class="form-control" onchange="filterRecords()">
+                <option value="all">เลือกพนักงานทั้งหมด</option>
+                <!-- พนักงานจะถูกโหลดหลังจากเลือกแผนก -->
+              </select>
+            </div>
           </div>
-          <div class="button-group">
+
+          <div class="button-group d-flex justify-content-between w-100">
             <button id="refreshCalendar"><span class="glyphicon">&#xe031;</span></button>
 
-            <button onclick="filterRecords()">ค้นหา</button>
-            <script>
-              function filterRecords() {
-                let startDate = document.getElementById("startDate").value;
-                let endDate = document.getElementById("endDate").value;
-
-                if (!startDate || !endDate) {
-                  alert("กรุณาเลือกวันที่เริ่มต้นและสุด");
-                  return;
-                }
-                // URL ที่มีพารามิเตอร์วันที่
-                calendar.setOption('events', `api_get_today_record.php?start_date=${startDate}&end_date=${endDate}`);
-
-                // รีโหลดข้อมูลใหม่จาก API
-                calendar.refetchEvents(); // โหลดอีเวนต์ใหม่
-              }
-            </script>
-
-
             <button onclick="exportToExcel()"><i class="fas fa-file-excel"></i> Export Excel</button>
+
             <script>
               function exportToExcel() {
                 let startDate = document.getElementById('startDate').value;
@@ -299,6 +352,7 @@ $personel_name = $user['personel_name'] ?? "Guest";
             </script>
           </div>
         </div>
+        </>
 
         <!-- ส่วนของใครลงบันทึกไปแล้วบ้าง -->
         <div class="schedule-summary">
@@ -324,29 +378,69 @@ $personel_name = $user['personel_name'] ?? "Guest";
               </div>
             </div>
           </div>
+        </div>
       </section>
 </body>
 
 </html>
 
-
 <script>
+  function filterRecords() {
+    let startDate = document.getElementById("startDate").value;
+    let endDate = document.getElementById("endDate").value;
+    let institutionId = document.getElementById("institutionFilter").value;
+    let personelId = document.getElementById("personelFilter").value;
+
+    let url = "api_get_today_record.php?";
+
+    if (institutionId) url += `institution_id=${institutionId}`;
+    if (personelId && personelId !== "all") url += `&personel_id=${personelId}`;
+    if (startDate || endDate) url += `&start_date=${startDate}&end_date=${endDate}`;
+
+    console.log("Fetching from URL:", url);
+    calendar.removeAllEvents();
+    calendar.setOption('events', url);
+    calendar.refetchEvents(); // โหลดอีเวนต์ใหม่
+  }
+
+  function filterPersonel() {
+    let institutionId = document.getElementById("institutionFilter").value;
+    let personelSelect = document.getElementById("personelFilter");
+
+    if (!institutionId) {
+      personelSelect.style.display = "none";
+      return;
+    }
+
+    // รีเซ็ตตัวเลือกพนักงาน
+    personelSelect.innerHTML = '<option value="all">เลือกพนักงานทั้งหมด</option>';
+
+    if (!institutionId) return;
+
+    // ใช้ Fetch API เพื่อดึงข้อมูลพนักงานจากฐานข้อมูล
+    fetch(`get_personel.php?institution_id=${institutionId}`)
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(personel => {
+          personelSelect.innerHTML += `<option value="${personel.personel_id}">${personel.personel_name}</option>`;
+        });
+        personelSelect.style.display = "block"; // แสดง select พนักงาน
+
+        const apiUrl = `api_get_today_record.php?institution_id=${institutionId}`;
+        filterRecords(apiUrl);
+      })
+      .catch(error => {
+        console.error("Error fetching personnel data:", error);
+      });
+  }
+
   let calendar;
   document.addEventListener('DOMContentLoaded', function() {
+    filterPersonel(); //โหลดพนักงานทันทีเมื่อเปิดหน้าเว็บ
+    document.getElementById("institutionFilter").addEventListener("change", filterPersonel);
+
+    // ฝั่ง FullCalendar
     let calendarEl = document.getElementById('calendar');
-
-    document.getElementById("refreshCalendar").addEventListener("click", function() {
-      if (calendar) {
-        console.log("refresh...");
-
-        calendar.removeAllEvents();
-
-        calendar.addEventSource('api_get_today_record.php');
-      } else {
-        console.error("calendar has not configured.");
-      }
-    });
-
     // กำหนดค่าให้ตัวแปร global
     calendar = new FullCalendar.Calendar(calendarEl, {
       themeSystem: 'standard',
@@ -358,23 +452,40 @@ $personel_name = $user['personel_name'] ?? "Guest";
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,listWeek'
       },
-      events: 'api_get_today_record.php', // โหลดข้อมูลจาก API
-      eventClick: function(info) {
-        console.log("📅 Click Event: ", info.event); // Debugging
+      dayMaxEventRows: 3,
 
+      // การตั้งค่า events
+      events: function(info, successCallback, failureCallback) {
+        let url = `api_get_today_record.php?start_date=${info.startStr}&end_date=${info.endStr}`;
+
+        let institutionId = document.getElementById("institutionFilter").value;
+        let personelId = document.getElementById("personelFilter").value;
+
+        if (institutionId) {
+          url += `&institution_id=${institutionId}`;
+        }
+        if (personelId && personelId !== "all") { // ถ้าไม่เลือก "พนักงานทั้งหมด"
+          url += `&personel_id=${personelId}`;
+        }
+        console.log("Fetching from URL: ", url);
+
+        fetch(url)
+          .then(response => response.json())
+          .then(data => successCallback(data))
+          .catch(error => failureCallback(error));
+      },
+
+      eventClick: function(info) {
         // ตั้งค่าข้อมูลลงใน modal
         document.getElementById('modal-title').textContent = info.event.title;
         document.getElementById('modal-date').textContent = info.event.start.toLocaleDateString();
         document.getElementById('modal-personnel').textContent = info.event.extendedProps.personel_name || "ไม่ระบุ";
         document.getElementById('modal-description').innerHTML = info.event.extendedProps.description || "ไม่มีรายละเอียด";
 
-        // ตรวจสอบว่ามี Modal หรือไม่
-        console.log($('#eventModal'));
-
         // แสดง Modal ด้วย Bootstrap 3
         $('#eventModal').modal('show');
-
       },
+
       eventDidMount: function(info) {
         if (info.event.backgroundColor) {
           info.el.style.backgroundColor = info.event.backgroundColor;
@@ -385,6 +496,24 @@ $personel_name = $user['personel_name'] ?? "Guest";
       }
     });
     calendar.render();
+
+    function filterInstitutionAndPersonel() {
+      let institutionId = document.getElementById("institutionFilter").value;
+      let personelId = "all"; // เลือกพนักงานทั้งหมด
+
+      // เริ่มต้น URL ตามแผนกที่เลือก
+      let url = `api_get_today_record.php?institution_id=${institutionId}`;
+      filterRecords(url);
+    }
+
+    // รีเฟรชปฏิทินเมื่อกดปุ่ม refresh
+    document.getElementById("refreshCalendar").addEventListener("click", function() {
+      location.reload(); // รีโหลดหน้าใหม่
+    });
+
+    filterInstitutionAndPersonel();
+
+    document.getElementById("institutionFilter").addEventListener("change", filterPersonel);
 
     setTimeout(function() {
       let toggleButton = document.querySelector(".sidebar-toggle");

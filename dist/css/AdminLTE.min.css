@@ -6,14 +6,6 @@
  *           Please visit http://opensource.org/licenses/MIT for more information
  */
 
- @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap');
- @font-face {
-    font-family: 'Kanit';
-    src: url('https://example.com/fonts/Kanit.woff2') format('woff2');
-}
-
-
-
 html,
 body {
     height: 100%
@@ -25,7 +17,7 @@ body {
 }
 
 body {
-    font-family: 'Kanit', 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
     font-weight: 400;
     overflow-x: hidden;
     overflow-y: auto
@@ -182,7 +174,7 @@ h6,
 .h4,
 .h5,
 .h6 {
-    font-family: 'Kanit', 'Source Sans Pro', sans-serif !important
+    font-family: 'Source Sans Pro', sans-serif !important
 }
 
 a {

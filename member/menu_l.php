@@ -33,7 +33,7 @@
           $user['personel_name'] = "Guest"; // ตั้งชื่อเป็น Guest ถ้าไม่ได้ล็อกอิน
         }
         ?>
-        <img src="<?= $profile_picture; ?>" class="profile-img" alt="User Image">
+        <img src="<?= $profile_picture; ?>" class="profile-img" alt="User Image" loading="lazy">
       </div>
       <div class="pull-left info">
         <p><?php echo "ยินดีต้อนรับ" ?></p>
@@ -43,6 +43,20 @@
       </div>
     </div>
     <ul class="sidebar-menu" data-widget="tree">
+
+      <li class="header">กิจกกรรม(Event)</li>
+      <li>
+        <a href="calendar.php"><i class="fa fa-edit"></i>
+          <span>ข้อมูลการบันทึกกิจกรรม</span>
+        </a>
+      </li>
+      <li class="header">การทำงาน</li>
+      <li>
+        <a href="index2.php"><i class="fa fa-edit"></i>
+          <span>ข้อมูลบันทึกการทำงาน</span>
+        </a>
+      </li>
+
       <li class="header">สำหรับพนักงาน</li>
       <li>
         <a href="add_record.php"><i class="fa fa-edit"></i>

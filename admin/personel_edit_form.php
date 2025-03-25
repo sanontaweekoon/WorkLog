@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
 <style>
     .form-group {
         margin-bottom: 15px;
@@ -85,7 +84,7 @@ $result_institution = mysqli_query($con, $query_institution);
                             <option value="<?php echo $row['personel_level']; ?>">
                                 <?php echo ($row['personel_level'] == 'member') ? 'บุคลากร' : 'ผู้ดูแลระบบ'; ?>
                             </option>
-                            <option value="">--เลือกใหม่--</option>
+                            <option value="" disabled>--เลือกใหม่--</option>
                             <option value="member">บุคลากร</option>
                             <option value="admin">ผู้ดูแลระบบ</option>
                         </select>
@@ -98,7 +97,7 @@ $result_institution = mysqli_query($con, $query_institution);
                     <div class="col-md-6">
                         <select name="institution_id" class="form-control">
                             <option value="<?php echo $row['institution_id'] ?>" selected><?php echo $row['institution_name'] ?></option>
-                            <option value="">--เลือกใหม่--</option>
+                            <option value="" disabled>--เลือกใหม่--</option>
                             <?php while ($inst = mysqli_fetch_assoc($result_institution)) { ?>
                                 <option value="<?php echo $inst['institution_id'] ?>"><?php echo $inst['institution_name'] ?></option>
                             <?php } ?>

@@ -1,7 +1,20 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
-
-
 <?php include('header.php'); ?>
+
+<style>
+   .btn-success {
+    padding: 10px 15px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+  }
+  .btn-danger{
+    padding: 10px 15px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+
+  }
+</style>
 
 <body class="hold-transition skin-green sidebar-mini">
   <div class="wrapper">
@@ -57,10 +70,9 @@
 
 </html>
 <script>
-$(document).ready(function(){
+  $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
-});
-
+  });
 </script>
 
 <?php include('footerjs.php'); ?>

@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
-
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -85,7 +83,7 @@ $profile_picture = !empty($row["profile_picture"]) ? "../admin/uploads/personel/
     <!-- แสดงรูปโปรไฟล์ -->
     <div class="form-group text-center">
         <img id="profilePreview" src="<?= !empty($row['profile_picture']) ? '../admin/uploads/personel/' . $row['profile_picture'] : '../admin/uploads/personel/default.png'; ?>"
-            class="profile-img" alt="Profile Picture">
+            class="profile-img" alt="Profile Picture" loading="lazy">
     </div>
 
     <!-- อัปโหลดรูป -->

@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
 <style>
     .form-group {
         margin-bottom: 15px;
@@ -73,7 +72,7 @@ $row_LastID = mysqli_fetch_assoc($LastID);
             <div class="form-group row">
                 <label class="col-md-2 col-form-label text-md-right">Username</label>
                 <div class="col-md-6">
-                    <input type="text" name="username" class="form-control validate-input" required minlength="3">
+                    <input type="text" name="username" class="form-control validate-input" required minlength="3" placeholder="กรุณากรอกชื่อผู้ใช้งาน">
                     <span class="error-msg text-danger"></span>
                 </div>
             </div>
@@ -82,7 +81,7 @@ $row_LastID = mysqli_fetch_assoc($LastID);
             <div class="form-group row">
                 <label class="col-md-2 col-form-label text-md-right">Password</label>
                 <div class="col-md-6">
-                    <input type="password" name="password" class="form-control validate-input" required minlength="3">
+                    <input type="password" name="password" class="form-control validate-input" required minlength="3" placeholder="กรุณากรอกรหัสผ่าน">
                     <span class="error-msg text-danger"></span>
                 </div>
             </div>
@@ -118,7 +117,7 @@ $row_LastID = mysqli_fetch_assoc($LastID);
             <div class="form-group row">
                 <label class="col-md-2 col-form-label text-md-right">ชื่อบุคลากร</label>
                 <div class="col-md-6">
-                    <input type="text" name="personel_name" class="form-control validate-input" data-pattern="^[ก-๙a-zA-Z\s]+$">
+                    <input type="text" name="personel_name" class="form-control validate-input" data-pattern="^[ก-๙a-zA-Z\s]+$" placeholder="กรุณากรอกชื่อ">
                     <span class="error-msg text-danger"></span>
                 </div>
             </div>
@@ -127,7 +126,7 @@ $row_LastID = mysqli_fetch_assoc($LastID);
             <div class="form-group row">
                 <label class="col-md-2 col-form-label text-md-right">ข้อมูลการติดต่อ</label>
                 <div class="col-md-6">
-                    <input type="text" name="personel_call" class="form-control validate-input" data-pattern="^[0-9]+$">
+                    <input type="text" name="personel_call" class="form-control validate-input" data-pattern="^[0-9]+$" placeholder="กรุณากรอกเบอร์ติดต่อ"> 
                     <span class="error-msg text-danger"></span>
                 </div>
             </div>
@@ -138,7 +137,7 @@ $row_LastID = mysqli_fetch_assoc($LastID);
                 <div class="col-md-6">
                     <input type="file" name="profile_picture" id="profile_picture" class="form-control" accept="image/*" onchange="previewImage(event)">
                     <br>
-                    <img id="imagePreview" src="uploads/default.png" alt="Profile Preview" width="100" height="100" style="border-radius: 50%; display: none;">
+                    <img id="imagePreview" src="uploads/default.png" alt="Profile Preview" width="100" height="100" style="border-radius: 50%; display: none;" loading="lazy">
                 </div>
             </div>
 

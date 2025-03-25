@@ -1,5 +1,4 @@
-<head>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
+<head> 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -125,7 +124,7 @@ $totalRows_institution = mysqli_num_rows($institution);
                     <label class="col-md-2 col-form-label text-md-right">แผนก</label>
                     <div class="col-md-6">
                         <select name="institution_id" id="institution_id" class="form-control">
-                            <option value="">--เลือกแผนก--</option>
+                            <option value="" selected disabled>--เลือกแผนก--</option>
                             <?php
                             while ($row = mysqli_fetch_assoc($institution)) { ?>
                                 <option value="<?php echo $row['institution_id']; ?>">
@@ -140,7 +139,7 @@ $totalRows_institution = mysqli_num_rows($institution);
                     <label class="col-md-2 col-form-label text-md-right">ผู้รับมอบหมาย</label>
                     <div class="col-md-6">
                         <select name="personel_id" id="personel_id" class="form-control">
-                            <option value="">--เลือกพนักงาน--</option>
+                            <option value="" selected disabled>--เลือกพนักงาน--</option>
                         </select>
                     </div>
                 </div>
@@ -227,7 +226,7 @@ $totalRows_institution = mysqli_num_rows($institution);
             var institution_id = $(this).val();
             if (institution_id != '') {
                 $.ajax({
-                    url: "get_personel.php",
+                    url: "fetch_personel.php",
                     method: "POST",
                     data: {
                         institution_id: institution_id

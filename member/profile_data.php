@@ -1,5 +1,3 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
-
 <style>
     #box-list {
         border: 1px solid #ddd;
@@ -100,7 +98,7 @@ if ($row_rsmem = mysqli_fetch_assoc($result)) {
 ?>
 
     <div class='box-list'>
-        <img src="<?= $profile_picture; ?>" class="profile-img" alt="Profile Picture">
+        <img src="<?= $profile_picture; ?>" class="profile-img" alt="Profile Picture" loading="lazy">
 
         <table width='100%'>
             <tbody>

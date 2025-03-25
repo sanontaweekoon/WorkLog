@@ -1,6 +1,5 @@
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap">
-<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-<script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.0/dist/quill.snow.css">
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.0-dev.4/dist/quill.min.js"></script>
 <script src="../dist/js/resize_image.js"></script>
 
 <?php
@@ -27,7 +26,7 @@ $personel_id = isset($_SESSION['personel_id']) ? $_SESSION['personel_id'] : 0;
                                 <form action="record_save.php" method="POST" enctype="multipart/form-data">
                                     <div class="form-group">
                                         <label for="title">ชื่อเรื่อง</label>
-                                        <input type="text" name="title" id="title" class="form-control" required>
+                                        <input type="text" name="title" id="title" class="form-control" placeholder="กรุณากรอกชื่อเรื่อง" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="date">วันที่</label>
@@ -90,7 +89,6 @@ $personel_id = isset($_SESSION['personel_id']) ? $_SESSION['personel_id'] : 0;
             function updateHiddenInput() {
                 let content = quill.root.innerHTML.trim(); // เอาข้อมูลจาก Quill Editor
                 document.querySelector('#hidden-editor').value = content; // อัปเดตลง input hidden
-                console.log("Detail being sent: ", content); // Debug ดูว่าค่าถูกต้องหรือไม่
                 return true;
             }
 
@@ -133,23 +131,17 @@ $personel_id = isset($_SESSION['personel_id']) ? $_SESSION['personel_id'] : 0;
                         return;
                     }
 
-                    console.log("File selected:", file);
-
                     resizeImage(file, 800, 800, 0.7, async function(resizedBlob) {
                         let formData = new FormData();
                         formData.append('image', resizedBlob, file.name);
-
-                        console.log("⬆ Uploading image...");
 
                         try {
                             let response = await fetch('upload_image.php', {
                                 method: 'POST',
                                 body: formData
                             });
-
                             let result = await response.json();
-                            console.log("Upload Result:", result);
-
+                        
                             if (result.success) {
                                 let range = quill.getSelection();
                                 quill.insertEmbed(range.index, 'image', result.url);
