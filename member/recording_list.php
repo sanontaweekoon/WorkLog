@@ -10,10 +10,22 @@ if (!isset($_SESSION['personel_id'])) {
 
 $logged_in_user = $_SESSION['personel_id'];
 
+$limit = 21; //รายการต่อหน้า
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$start = ($page - 1) * $limit;
+
+$count_query = "SELECT COUNT(*) AS total FROM tbl_m_record";
+$count_result = mysqli_query($con, $count_query);
+$count_row = mysqli_fetch_assoc($count_result);
+$total_records = $count_row['total'];
+$total_pages = ceil($total_records /  $limit);
+
 $sql = "SELECT tbl_m_record.*, personel.personel_name 
         FROM tbl_m_record
         INNER JOIN personel ON tbl_m_record.personel_id = personel.personel_id
-        ORDER BY tbl_m_record.date DESC, tbl_m_record.id DESC";
+        ORDER BY tbl_m_record.date DESC, tbl_m_record.id DESC
+        LIMIT $start, $limit
+        ";
 
 $result = $con->query($sql);
 ?>
@@ -65,12 +77,12 @@ $result = $con->query($sql);
         align-items: center;
     }
 
-    .feed-header h4{
-        white-space: nowrap;      
-        overflow: hidden;         
-        text-overflow: ellipsis;   
-        display: block;            
-        max-width: 70%;   
+    .feed-header h4 {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        max-width: 70%;
     }
 
     .feed-card img {
@@ -164,7 +176,7 @@ $result = $con->query($sql);
     @media (max-width: 576px) {
         .feed-card {
             flex-basis: 100%;
-        max-width: 100%;
+            max-width: 100%;
         }
     }
 
@@ -179,7 +191,7 @@ $result = $con->query($sql);
         height: 45px;
         border: none;
         outline: none;
-        background-color: rgba(200, 200, 200, 0.2);
+        background-color: rgba(200, 200, 200, 0.1);
         /* สีเทาอ่อนมาก */
         color: rgba(50, 50, 50, 0.6);
         /* สีเทาเข้มขึ้นเล็กน้อย */
@@ -226,6 +238,32 @@ $result = $con->query($sql);
     .swal-cancel-btn:hover {
         background-color: #5a6268 !important;
     }
+
+    .pagination a {
+        margin: 0 5px;
+        padding: 8px 12px;
+        border: 1px solid #ccc;
+        color: #333;
+        text-decoration: none;
+        background-color: #f8f8f8;
+        transition: 0.3s;
+    }
+
+    .pagination a:hover {
+        background-color: #06C755;
+        color: white;
+    }
+
+    .pagination a.active {
+        background-color: #06C755;
+        color: white;
+        font-weight: bold;
+    }
+
+    .pagination span {
+        margin: 0 5px;
+        color: #888;
+    }
 </style>
 
 <!-- เรียกใช้งาน SweetAlert2 -->
@@ -244,7 +282,7 @@ $result = $con->query($sql);
                     <button class="btn btn-success btn-sm" id="showAll">แสดงทั้งหมด</button>
                     <button class="btn btn-default btn-sm" id="showMine">แสดงเฉพาะของฉัน</button>
                     <button id="filter-records-user-2" class="btn btn-default btn-sm" style="display: none;">
-                    ࿋
+                        ࿋
                     </button>
                 </div>
 
@@ -281,8 +319,8 @@ $result = $con->query($sql);
                             </div>
                         </div>
 
-
-                        <button onclick="topFunction()" id="myBtn" title="Go to top"><i class='fas fa-arrow-alt-circle-up'></i></button>
+                        <button onclick="topFunction()" id="myBtn" title="Go to top" style="margin-bottom: 50px"><i class='fas fa-arrow-alt-circle-up'></i></button>
+                        <button onclick="bottomFunction()" id="myBtn" title="Go to Bottom"><i class='fas fa-arrow-alt-circle-down'></i></button>
 
                         <!-- Modal แสดงรายละเอียด -->
                         <div class="modal fade" id="detailModal<?php echo $row['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="modalTitle<?php echo $row['id']; ?>" data-backdrop="static">
@@ -296,6 +334,8 @@ $result = $con->query($sql);
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
+
+
 
                                     <div class="modal-body">
 
@@ -523,6 +563,33 @@ $result = $con->query($sql);
                         </div>
                     <?php } ?>
                 </div>
+                <?php
+                $adjacents = 2;
+                $start_page = ($page > $adjacents) ? $page - $adjacents : 1;
+                $end_page = ($page < $total_pages - $adjacents) ? $page + $adjacents : $total_pages;
+                ?>
+
+                <div class="pagination" style="text-align: center; margin-top: 20px;">
+                    <?php if ($page > 1): ?>
+                        <a href="?page=1">&laquo;</a>
+                    <?php endif; ?>
+
+                    <?php if ($start_page > 1): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                        <a href="?page=<?= $i ?>" class="<?= ($i == $page) ? 'active' : '' ?>"><?= $i ?></a>
+                    <?php endfor; ?>
+
+                    <?php if ($end_page < $total_pages): ?>
+                        <span>...</span>
+                    <?php endif; ?>
+
+                    <?php if ($page < $total_pages): ?>
+                        <a href="?page=<?= $total_pages ?>">&raquo;</a>
+                    <?php endif; ?>
+                </div>
             </section>
         </div>
     </div>
@@ -561,7 +628,7 @@ $result = $con->query($sql);
                 document.querySelectorAll(".feed-card").forEach(card => {
                     let ownerId = card.getAttribute("data-personel-id");
                     if (ownerId != targetUserId) {
-                        card.style.display = "none"; 
+                        card.style.display = "none";
                     } else {
                         card.style.display = "block";
                     }
@@ -571,15 +638,7 @@ $result = $con->query($sql);
                 filterRecordsByUser(2);
             });
 
-            // แสดงทั้งหมด
-            showAllBtn.addEventListener("click", function() {
-                allCards.forEach(card => {
-                    card.style.display = "block";
-                });
-            });
-
-            // แสดงเฉพาะของฉัน
-            showMineBtn.addEventListener("click", function() {
+            function applyUserFilter() {
                 allCards.forEach(card => {
                     if (card.getAttribute("data-personel-id") === currentUser) {
                         card.style.display = "block";
@@ -587,7 +646,31 @@ $result = $con->query($sql);
                         card.style.display = "none";
                     }
                 });
+            }
+
+            // แสดงทั้งหมด
+            showAllBtn.addEventListener("click", function() {
+                const url = new URL(window.location.href);
+                url.searchParams.set("filter", "all");
+                url.searchParams.set("page", "1");
+                window.location.href = url.toString();
             });
+
+            // แสดงเฉพาะของฉัน
+            showMineBtn.addEventListener("click", function() {
+                const url = new URL(window.location.href);
+                url.searchParams.set("filter", "mine");
+                url.searchParams.set("page", "1"); // รีเซ็ตหน้า
+                window.location.href = url.toString();
+            });
+
+            // ตรวจสอบ filter จาก URL เพื่อ apply หลังโหลด
+            const urlParams = new URLSearchParams(window.location.search);
+            const filter = urlParams.get("filter");
+
+            if (filter === "mine") {
+                applyUserFilter();
+            }
         });
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -643,8 +726,11 @@ $result = $con->query($sql);
 
         // When the user clicks on the button, scroll to the top of the document
         function topFunction() {
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function bottomFunction() {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         }
     </script>
 

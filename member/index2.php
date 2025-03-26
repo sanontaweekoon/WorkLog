@@ -36,7 +36,7 @@ if ($personel_level === 'admin') {
 
 if ($personel_level === 'member') {
   // ไม่ให้เปลี่ยนแผนกเองจาก GET
-  $institution_id = $user['institution_id']; 
+  $institution_id = $user['institution_id'];
 }
 ?>
 
@@ -512,14 +512,22 @@ if ($personel_level === 'member') {
 
     // รีเฟรชปฏิทินเมื่อกดปุ่ม refresh
     document.getElementById("refreshCalendar").addEventListener("click", function() {
-      // รีเซ็ตตัวกรองทั้งหมดเมื่อคลิกปุ่ม refreshCalendar
-      document.getElementById("institutionFilter").value = ""; // รีเซ็ตแผนก
-      document.getElementById("personelFilter").value = "all"; // รีเซ็ตรายการพนักงาน
-      document.getElementById("personelFilter").style.display = "none"; // ซ่อน select พนักงาน
+      document.getElementById("startDate").value = "";
+      document.getElementById("endDate").value = "";
+     
+      const personelInput = document.getElementById("personelFilter");
+       // รีเซ็ตพนักงานให้เป็น "ทั้งหมด"
+      if (personelInput) {
+        personelInput.value = "all";
+      }
 
-      let url = "api_get_today_record.php?"; // URL ที่จะใช้สำหรับโหลดข้อมูล
-      calendar.setOption('events', url);
-      calendar.refetchEvents(); // โหลดข้อมูลใหม่
+      const institutionId = document.getElementById("institutionFilter")?.value || "";
+
+      let url = `api_get_today_record.php`;
+      if (institutionId){
+        url += `?institution_id=${institutionId}`;
+      }
+      filterRecords(url);
     });
 
     filterInstitutionAndPersonel();

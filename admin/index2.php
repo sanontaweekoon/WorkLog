@@ -508,7 +508,21 @@ if ($personel_level === 'admin') {
 
     // รีเฟรชปฏิทินเมื่อกดปุ่ม refresh
     document.getElementById("refreshCalendar").addEventListener("click", function() {
-      location.reload(); // รีโหลดหน้าใหม่
+      document.getElementById("startDate").value = "";
+      document.getElementById("endDate").value = "";
+
+      // รีเซ็ตแผนก
+      const institutionSelect = document.getElementById("institutionFilter");
+      if (institutionSelect.tagName.toLowerCase() === "select"){
+        institutionSelect.selectedIndex = 0; // กลับไปที่ option แรก
+        filterPersonel(); // โหลดพนักงานใหม่ตามแผนก
+      }
+
+      const personelSelect = document.getElementById("personelFilter");
+      personelSelect.innerHTML = '<option value="all">เลือกพนักงานทั้งหมด</option>';
+      personelSelect.style.display = "none";
+
+      calendar.refetchEvents();
     });
 
     filterInstitutionAndPersonel();
